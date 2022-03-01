@@ -74,7 +74,7 @@ namespace AppStore.SDK.Demo
         /// </summary>
         /// <param name="appStoreClient">Appstore client object</param>
         /// <param name="token">Access token</param>
-        /// <returns>Response data field which contain list of allowed tenants and their permissions</returns>
+        /// <returns>Response object Data field which contain list of allowed tenants and their permissions</returns>
         private static async Task<List<TenantAccess>> RetriveAllowedTenantsList(AppStoreClient appStoreClient, string token)
         {
             var tenantResponse = await appStoreClient.GetAllowedTenants(token);
