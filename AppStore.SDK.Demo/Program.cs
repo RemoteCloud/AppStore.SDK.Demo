@@ -33,6 +33,17 @@ namespace AppStore.SDK.Demo
             Log($"Client authorized and has access to required tenant: {requestValidationResult}");
 
         }
+        private static AppStoreClient InitializeAppStoreClient()
+        {
+            var appStoreSettings = new AppStoreSettings
+            {
+                ClientId = ClientId,
+                ClientSecret = ClientsSecret,
+                AppStoreUrl = AppStoreUrl
+            };
+
+            return new AppStoreClient(appStoreSettings);
+        }
 
         private static async Task<string> RetriveAccessTokenAsync(AppStoreClient appStoreClient)
         {
@@ -58,18 +69,6 @@ namespace AppStore.SDK.Demo
             return null;
         }
       
-        private static AppStoreClient InitializeAppStoreClient()
-        {
-            var appStoreSettings = new AppStoreSettings
-            {
-                ClientId = ClientId,
-                ClientSecret = ClientsSecret,
-                AppStoreUrl = AppStoreUrl
-            };
-
-            return new AppStoreClient(appStoreSettings);
-        }
-
         private static async Task<string> SendRequestAndGetDataFromUserManagement(string token, string tenant) 
         {
             var request = new HttpRequestMessage(
