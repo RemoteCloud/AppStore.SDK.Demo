@@ -14,7 +14,7 @@ namespace AppStore.SDK.Demo
         private const string ClientsSecret = "VMrlJwbbhHUA/VhvtXMgzPnJg/O2bH5j2nHN47B5";
         private const string AppStoreUrl = "https://store.central.nightlybuild.dev";
         private const string ApiEndpointUrl = "https://api.central.nightlybuild.dev";
-        private const string RequestHost = "127.0.0.1"; //Currently we dont need it
+        private const string RequestHost = "127.0.0.1"; //Currently we dont need it, just do not leave it empty for Validation method.
         
         static async Task Main(string[] args)
         {
@@ -33,6 +33,10 @@ namespace AppStore.SDK.Demo
             Log($"Client authorized and has access to required tenant: {requestValidationResult}");
 
         }
+
+        /// <summary>
+        /// Initialize appStore client
+        /// </summary>
         private static AppStoreClient InitializeAppStoreClient()
         {
             var appStoreSettings = new AppStoreSettings
@@ -45,6 +49,10 @@ namespace AppStore.SDK.Demo
             return new AppStoreClient(appStoreSettings);
         }
 
+        /// <summary>
+        /// Authorize and get access token
+        /// </summary>
+        /// <param name="appStoreClient">Appstore client object</param>
         private static async Task<string> RetriveAccessTokenAsync(AppStoreClient appStoreClient)
         {
             Log("Capturing token from AppStore");
@@ -61,6 +69,12 @@ namespace AppStore.SDK.Demo
             return token;
         }
 
+        /// <summary>
+        /// Example of getting allowed tenants
+        /// </summary>
+        /// <param name="appStoreClient">Appstore client object</param>
+        /// <param name="token">Access token</param>
+        /// <returns>Response data field which contain list of allowed tenants and their permissions</returns>
         private static async Task<List<TenantAccess>> RetriveAllowedTenantsList(AppStoreClient appStoreClient, string token)
         {
             var tenantResponse = await appStoreClient.GetAllowedTenants(token);
@@ -69,6 +83,11 @@ namespace AppStore.SDK.Demo
             return null;
         }
       
+        /// <summary>
+        /// Example of request to Useremanagement system through api gateway
+        /// </summary>
+        /// <param name="token">Access token</param>
+        /// <param name="tenant">Tenant name</param>
         private static async Task<string> SendRequestAndGetDataFromUserManagement(string token, string tenant) 
         {
             var request = new HttpRequestMessage(
@@ -100,17 +119,17 @@ namespace AppStore.SDK.Demo
         }
 
         /// <summary>
-        /// 
+        /// Example of incoming request validation
         /// </summary>
-        /// <param name="appStoreClient"></param>
-        /// <param name="token"></param>
-        /// <param name="tenant"></param>
-        /// <param name="requestHost"></param>
-        /// <returns></returns>
+        /// <param name="appStoreClient">Appstore client object</param>
+        /// <param name="token">Access token</param>
+        /// <param name="tenant">Tenant name</param>
+        /// <param name="requestHost">Client ipAddress (in ipv4 format) usualy taken from request.HttpContext.Connection.RemoteIpAddress</param>
         private static bool ValidateRequest(AppStoreClient appStoreClient, string token,string tenant,string requestHost) 
         {
             Log("Token validation starting");
 
+            //IsTokenSignatureValid method can be used separately.
             bool isSignatureValid = appStoreClient.IsTokenSignatureValid(token);
             Log($"Signature is valid: {isSignatureValid}");
             ValidationResponse validationResult = appStoreClient.ValidateAccess($"Bearer {token}", tenant, requestHost);
