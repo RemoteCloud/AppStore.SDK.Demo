@@ -33,6 +33,43 @@ namespace AppStore.SDK.Demo
             Log($"Client authorized and has access to required tenant: {requestValidationResult}");
 
         }
+
+        private static async Task<string> RetriveAccessTokenAsync(AppStoreClient appStoreClient)
+        {
+            Log("Capturing token from AppStore");
+            var token = await appStoreClient.AuthorizeAsync();
+            Log(token);
+
+            if (string.IsNullOrEmpty(token))
+            {
+                Log("Received empty token");
+                return string.Empty;
+            }
+
+            Log("Token received successfully");
+            return token;
+        }
+
+        private static async Task<List<TenantAccess>> RetriveAllowedTenantsList(AppStoreClient appStoreClient, string token)
+        {
+            var tenantResponse = await appStoreClient.GetAllowedTenants(token);
+            if (tenantResponse != null && tenantResponse.HasError == false)
+                return tenantResponse.Data;
+            return null;
+        }
+      
+        private static AppStoreClient InitializeAppStoreClient()
+        {
+            var appStoreSettings = new AppStoreSettings
+            {
+                ClientId = ClientId,
+                ClientSecret = ClientsSecret,
+                AppStoreUrl = AppStoreUrl
+            };
+
+            return new AppStoreClient(appStoreSettings);
+        }
+
         private static async Task<string> SendRequestAndGetDataFromUserManagement(string token, string tenant) 
         {
             var request = new HttpRequestMessage(
@@ -61,40 +98,6 @@ namespace AppStore.SDK.Demo
             {
                 return response.StatusCode.ToString();
             }
-        }
-        private static async Task<List<TenantAccess>> RetriveAllowedTenantsList(AppStoreClient appStoreClient, string token) 
-        {
-            var tenantResponse = await appStoreClient.GetAllowedTenants(token);
-            if (tenantResponse != null && tenantResponse.HasError == false)
-                return tenantResponse.Data;
-            return null;
-        }
-        private static AppStoreClient InitializeAppStoreClient() 
-        {
-            var appStoreSettings = new AppStoreSettings
-            {
-                ClientId = ClientId,
-                ClientSecret = ClientsSecret,
-                AppStoreUrl = AppStoreUrl
-            };
-
-            return new AppStoreClient(appStoreSettings); 
-        }
-
-        private static async Task<string> RetriveAccessTokenAsync(AppStoreClient appStoreClient) 
-        {
-            Log("Capturing token from AppStore");
-            var token = await appStoreClient.AuthorizeAsync();
-            Log(token);
-
-            if (string.IsNullOrEmpty(token))
-            {
-                Log("Received empty token");
-                return string.Empty;
-            }
-
-            Log("Token received successfully");
-            return token;
         }
 
         /// <summary>
