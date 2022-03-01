@@ -11,7 +11,7 @@ namespace AppStore.SDK.Demo
         private const string ClientId = "d0d396a2-70b7-46a8-9395-f73dea2afd4b";
         private const string ClientsSecret = "VMrlJwbbhHUA/VhvtXMgzPnJg/O2bH5j2nHN47B5";
         private const string AppStoreUrl = "https://store.central.nightlybuild.dev";
-        private const string UserManagementUrl = "https://usermanagement.central.nightlybuild.dev";
+        private const string ApiEndpointUrl = "https://api.central.nightlybuild.dev";
         private const string TenantName = "CentralNightlyInstance";
         private const string LocationId = "0b286d82-70b1-4e48-b7ce-544c3b922c38";
         
@@ -39,7 +39,7 @@ namespace AppStore.SDK.Demo
 
             var request = new HttpRequestMessage(
                 HttpMethod.Get,
-                "/external/api/categories");
+                "/app/flows/echo");
             
             request.Headers.Add("Authorization", $"Bearer {token}");
             request.Headers.Add("Tenant", TenantName);
@@ -47,11 +47,11 @@ namespace AppStore.SDK.Demo
 
             using var client = new HttpClient
             {
-                BaseAddress = new Uri(UserManagementUrl),
+                BaseAddress = new Uri(ApiEndpointUrl),
                 Timeout = TimeSpan.FromSeconds(15)
             };
 
-            Log("Sending UserManagement request");
+            Log("Sending Api request");
             var response = client.SendAsync(request).Result;
             
             if (response.IsSuccessStatusCode)
